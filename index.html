@@ -40,7 +40,13 @@
     for(var c=0; c<brickColumnCount; c++) {
         bricks[c] = [];
         for(var r=0; r<brickRowCount; r++) {
-            bricks[c][r] = { x: 0, y: 0, status: 1 };
+            var info = randomBrick();
+            bricks[c][r] = { 
+                x: 0, 
+                y: 0, 
+                status: 1, 
+                level: info.level, 
+                color: info.color };
         }
     }
 
@@ -75,6 +81,7 @@
     
     function logMonster(data) {
         if (!lmSecret) {
+            console.log(data.level + "\t" + data.message);
             return;
         }
         var xhr = new XMLHttpRequest();
@@ -124,12 +131,15 @@
                         dy = -dy;
                         b.status = 0;
                         score++;
+
+                        logMonster({
+                                level: b.level,
+                                message: "Smashed a " + b.color + " brick!"});
+
                         if(score == brickRowCount*brickColumnCount) {
-                            error("You win, Sweeeet!.");
+                            info("You win, Sweeeet!.");
                             alert("YOU WIN, CONGRATS!");
                             return true;
-                        } else {
-                            warn("Smashed another brick!");
                         }
                     }
                 }
@@ -153,7 +163,17 @@
         ctx.fill();
         ctx.closePath();
     }
-    
+
+    function randomBrick() {
+        var colors = ["cyan",   "blue", "green", "gold", "red", "black"];
+        var levels = [ 10,       20,     30,      40,     50,    60];
+        var rand = Math.floor(Math.random() * Math.floor(colors.length));
+        return {
+            color: colors[rand],
+            level: levels[rand]
+        };
+    }
+
     function drawBricks() {
         for(var c=0; c<brickColumnCount; c++) {
             for(var r=0; r<brickRowCount; r++) {
@@ -164,7 +184,7 @@
                     bricks[c][r].y = brickY;
                     ctx.beginPath();
                     ctx.rect(brickX, brickY, brickWidth, brickHeight);
-                    ctx.fillStyle = "#0095DD";
+                    ctx.fillStyle = bricks[c][r].color; // "#0095DD";
                     ctx.fill();
                     ctx.closePath();
                 }
