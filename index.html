@@ -127,6 +127,7 @@
                         if(score == brickRowCount*brickColumnCount) {
                             error("You win, Sweeeet!.");
                             alert("YOU WIN, CONGRATS!");
+                            return true;
                         } else {
                             warn("Smashed another brick!");
                         }
@@ -134,6 +135,7 @@
                 }
             }
         }
+        return false;
     }
 
     function drawBall() {
@@ -189,7 +191,9 @@
         drawPaddle();
         drawScore();
         drawLives();
-        collisionDetection();
+        if (collisionDetection()) {
+            return;
+        }
 
         if(x + dx > canvas.width-ballRadius || x + dx < ballRadius) {
             dx = -dx;
@@ -204,6 +208,7 @@
                 if(!lives) {
                     fatal("Game over, you lose!");
                     alert("GAME OVER");
+                    return;
                 } else {
                     x = canvas.width/2;
                     y = canvas.height-30;
