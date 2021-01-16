@@ -88,7 +88,7 @@
     // *****************************************************
     function keyDownHandler(e) {
         if(e.keyCode == 39) {
-            warn("Going right -->");
+            debug("Going right -->");
             rightPressed = true;
         }
         else if(e.keyCode == 37) {
@@ -128,7 +128,7 @@
                             alert("YOU WIN, CONGRATS!");
                             document.location.reload();
                         } else {
-                            info("Smashed another brick!");
+                            warn("Smashed another brick!");
                         }
                     }
                 }
