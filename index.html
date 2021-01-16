@@ -48,39 +48,68 @@
     document.addEventListener("keyup", keyUpHandler, false);
     document.addEventListener("mousemove", mouseMoveHandler, false);
     
-    function getQueryParam(variable) {
-         var query = window.location.search.substring(1);
-         var vars = query.split("&");
-         for (var i=0;i<vars.length;i++) {
-                 var pair = vars[i].split("=");
-                 if(pair[0] == variable){
-                         return pair[1];
-                 }
-         }
-         return(false);
+    // *****************************************************
+    // ** LogMonster logging functions
+    // *****************************************************
+    var lmSecret = null;
+
+    function debug(message) {
+        logMonster({ level: 20, message });
     }
 
+    function info(message) {
+        logMonster({ level: 30, message });
+    }
+    
+    function warn(message) {
+        logMonster({ level: 40, message });
+    }
+
+    function error(message) {
+        logMonster({ level: 50, message });
+    }
+
+    function fatal(message) {
+        logMonster({ level: 60, message });
+    }
+    
+    function logMonster(data) {
+        if (!lmSecret) {
+            return;
+        }
+        var xhr = new XMLHttpRequest();
+        xhr.open("POST", "https://api.logmonster.net/api/v1/log/" + lmSecret, true);
+        xhr.setRequestHeader('Content-Type', 'application/json');
+        xhr.send(JSON.stringify(data));
+    }
+    
+    // *****************************************************
+    // ** GAME Code below
+    // *****************************************************
     function keyDownHandler(e) {
         if(e.keyCode == 39) {
+            warn("Going right -->");
             rightPressed = true;
         }
         else if(e.keyCode == 37) {
+            warn("<-- Going left");
             leftPressed = true;
         }
     }
     
     function keyUpHandler(e) {
         if(e.keyCode == 39) {
+            info("Stopped moving right.");
             rightPressed = false;
         }
         else if(e.keyCode == 37) {
-            leftPressed = false;
+            info("Stopped moving left.");
         }
     }
     
     function mouseMoveHandler(e) {
         var relativeX = e.clientX - canvas.offsetLeft;
-        if(relativeX > 0 && relativeX < canvas.width) {
+        if(relativeX > 0 && relativeX < canvas.width) {            
             paddleX = relativeX - paddleWidth/2;
         }
     }
@@ -95,8 +124,11 @@
                         b.status = 0;
                         score++;
                         if(score == brickRowCount*brickColumnCount) {
+                            error("You win! Sweeeet!.");
                             alert("YOU WIN, CONGRATS!");
                             document.location.reload();
+                        } else {
+                            info("Smashed another brick!");
                         }
                     }
                 }
@@ -111,6 +143,7 @@
         ctx.fill();
         ctx.closePath();
     }
+    
     function drawPaddle() {
         ctx.beginPath();
         ctx.rect(paddleX, canvas.height-paddleHeight, paddleWidth, paddleHeight);
@@ -118,6 +151,7 @@
         ctx.fill();
         ctx.closePath();
     }
+    
     function drawBricks() {
         for(var c=0; c<brickColumnCount; c++) {
             for(var r=0; r<brickRowCount; r++) {
@@ -135,11 +169,13 @@
             }
         }
     }
+    
     function drawScore() {
         ctx.font = "16px Arial";
         ctx.fillStyle = "#0095DD";
         ctx.fillText("Score: "+score, 8, 20);
     }
+    
     function drawLives() {
         ctx.font = "16px Arial";
         ctx.fillStyle = "#0095DD";
@@ -160,18 +196,16 @@
         }
         if(y + dy < ballRadius) {
             dy = -dy;
-        }
-        else if(y + dy > canvas.height-ballRadius) {
+        } else if(y + dy > canvas.height-ballRadius) {
             if(x > paddleX && x < paddleX + paddleWidth) {
                 dy = -dy;
-            }
-            else {
+            } else {
                 lives--;
                 if(!lives) {
+                    fatal("Game over, you lose!");
                     alert("GAME OVER");
                     document.location.reload();
-                }
-                else {
+                } else {
                     x = canvas.width/2;
                     y = canvas.height-30;
                     dx = 2;
@@ -183,8 +217,7 @@
 
         if(rightPressed && paddleX < canvas.width-paddleWidth) {
             paddleX += 7;
-        }
-        else if(leftPressed && paddleX > 0) {
+        } else if(leftPressed && paddleX > 0) {
             paddleX -= 7;
         }
 
@@ -194,6 +227,25 @@
     }
 
     draw();
+    
+    // *****************************************************
+    // ** Get the LogMonster secret from the URL!
+    // *****************************************************    
+    function getQueryParam(variable) {
+         var query = window.location.search.substring(1);
+         var vars = query.split("&");
+         for (var i=0;i<vars.length;i++) {
+                 var pair = vars[i].split("=");
+                 if(pair[0] == variable){
+                         return pair[1];
+                 }
+         }
+         return(false);
+    }
+
+    lmSecret = getQueryParam("secret");
+    // *****************************************************
+    
 </script>
 
 </body>
