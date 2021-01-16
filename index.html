@@ -59,23 +59,23 @@
     // *****************************************************
     var lmSecret = null;
 
-    function debug(message) {
+    function _debug(message) {
         logMonster({ level: 20, message });
     }
 
-    function info(message) {
+    function _info(message) {
         logMonster({ level: 30, message });
     }
     
-    function warn(message) {
+    function _warn(message) {
         logMonster({ level: 40, message });
     }
 
-    function error(message) {
+    function _error(message) {
         logMonster({ level: 50, message });
     }
 
-    function fatal(message) {
+    function _fatal(message) {
         logMonster({ level: 60, message });
     }
     
@@ -89,28 +89,30 @@
         xhr.setRequestHeader('Content-Type', 'application/json');
         xhr.send(JSON.stringify(data));
     }
-    
+
+    _info("Hay?!")
+    console.log(_info)
     // *****************************************************
     // ** GAME Code below
     // *****************************************************
     function keyDownHandler(e) {
         if(e.keyCode == 39) {
-            debug("Going right -->");
+            _debug("Going right -->");
             rightPressed = true;
         }
         else if(e.keyCode == 37) {
-            warn("<-- Going left");
+            _warn("<-- Going left");
             leftPressed = true;
         }
     }
     
     function keyUpHandler(e) {
         if(e.keyCode == 39) {
-            info("Stopped moving right.");
+            _info("Stopped moving right.");
             rightPressed = false;
         }
         else if(e.keyCode == 37) {
-            info("Stopped moving left.");
+            _info("Stopped moving left.");
             leftPressed = false;
         }
     }
@@ -137,7 +139,7 @@
                                 message: "Smashed a " + b.color + " brick!"});
 
                         if(score == brickRowCount*brickColumnCount) {
-                            info("You win, Sweeeet!.");
+                            _info("You win, Sweeeet!.");
                             alert("YOU WIN, CONGRATS!");
                             return true;
                         }
@@ -226,7 +228,7 @@
             } else {
                 lives--;
                 if(!lives) {
-                    fatal("Game over, you lose!");
+                    _fatal("Game over, you lose!");
                     alert("GAME OVER");
                     return;
                 } else {
