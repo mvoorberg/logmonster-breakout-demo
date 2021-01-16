@@ -125,9 +125,8 @@
                         b.status = 0;
                         score++;
                         if(score == brickRowCount*brickColumnCount) {
-                            error("You win! Sweeeet!.");
+                            error("You win, Sweeeet!.");
                             alert("YOU WIN, CONGRATS!");
-                            document.location.reload();
                         } else {
                             warn("Smashed another brick!");
                         }
@@ -205,7 +204,6 @@
                 if(!lives) {
                     fatal("Game over, you lose!");
                     alert("GAME OVER");
-                    document.location.reload();
                 } else {
                     x = canvas.width/2;
                     y = canvas.height-30;
